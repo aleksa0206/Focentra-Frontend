@@ -1,0 +1,67 @@
+@use 'sass:map';
+
+$breakpoints: (
+  'sm': 640px,
+  'md': 900px,
+  'lg': 1200px,
+);
+
+@mixin up($name) {
+  @media (min-width: map.get($breakpoints, $name)) {
+    @content;
+  }
+}
+
+@mixin down($name) {
+  @media (max-width: map.get($breakpoints, $name) - 0.02px) {
+    @content;
+  }
+}
+
+@mixin focus-ring {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 1px;
+}
+
+@mixin text($role) {
+  @if $role == 'title' {
+    font-size: var(--font-size-title);
+    font-weight: var(--font-weight-semibold);
+    line-height: 28px;
+  } @else if $role == 'section' {
+    font-size: var(--font-size-section);
+    font-weight: var(--font-weight-semibold);
+    line-height: 24px;
+  } @else if $role == 'body' {
+    font-size: var(--font-size-body);
+    line-height: 20px;
+  } @else if $role == 'secondary' {
+    font-size: var(--font-size-secondary);
+    line-height: 18px;
+    color: var(--color-text-secondary);
+  } @else if $role == 'meta' {
+    font-size: var(--font-size-meta);
+    line-height: 16px;
+    color: var(--color-text-tertiary);
+  } @else {
+    @error 'Unknown typography role: #{$role}';
+  }
+}
+
+@mixin truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@mixin visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}

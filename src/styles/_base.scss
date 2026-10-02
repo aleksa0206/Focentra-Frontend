@@ -1,0 +1,1006 @@
+@use 'mixins' as *;
+
+// Native elements and a few global classes (button, field, table, panel, badge).
+// Deliberately global: these primitives appear on every page, so component styles would
+// only duplicate them.
+
+body {
+  font-family: var(--font-family);
+  font-size: var(--font-size-body);
+  line-height: var(--line-height);
+  color: var(--color-text);
+  background: var(--color-bg);
+  -webkit-font-smoothing: antialiased;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'cv11', 'ss01';
+}
+
+a {
+  color: var(--color-accent-text);
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+:focus-visible {
+  @include focus-ring;
+}
+
+h1 {
+  @include text('title');
+}
+
+h2 {
+  @include text('section');
+}
+
+// ---------- Page ----------
+
+.page {
+  max-width: var(--content-max-width);
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-8) var(--space-12);
+
+  @include down('md') {
+    padding: var(--space-5) var(--space-4) var(--space-10);
+  }
+}
+
+.page--narrow {
+  max-width: calc(var(--form-max-width) + 2 * var(--space-8));
+}
+
+.page--wide {
+  max-width: none;
+}
+
+.section + .section {
+  margin-top: var(--space-8);
+}
+
+.section__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+// Two-column page body (main + side), collapsing to one column on smaller screens.
+.layout-split {
+  display: grid;
+  gap: var(--space-5);
+  align-items: start;
+
+  @include up('lg') {
+    grid-template-columns: minmax(0, 1fr) 340px;
+  }
+}
+
+.stack {
+  display: grid;
+  gap: var(--space-5);
+  align-content: start;
+}
+
+// Grid items default to min-width: auto and would grow to fit wide content (a year of heatmap)
+// instead of letting it scroll inside its panel.
+.stack > *,
+.layout-split > * {
+  min-width: 0;
+}
+
+.text-secondary {
+  @include text('secondary');
+}
+
+.text-meta {
+  @include text('meta');
+}
+
+.visually-hidden {
+  @include visually-hidden;
+}
+
+// ---------- Panels ----------
+
+.panel {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-panel);
+}
+
+.panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  min-height: 52px;
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.panel__title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-section);
+  font-weight: var(--font-weight-semibold);
+}
+
+.panel__count {
+  display: inline-grid;
+  place-items: center;
+  min-width: 22px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 10px;
+  background: var(--color-accent-subtle);
+  color: var(--color-accent-text);
+  font-size: var(--font-size-meta);
+  font-weight: var(--font-weight-semibold);
+}
+
+.panel__body {
+  padding: var(--space-4);
+}
+
+.panel__footer {
+  padding: var(--space-3) var(--space-4);
+  border-top: 1px solid var(--color-border);
+  font-size: var(--font-size-secondary);
+}
+
+// A table directly inside a panel takes the panel's frame instead of its own.
+.panel > .table-wrap {
+  border: 0;
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+  box-shadow: none;
+}
+
+.panel > .toolbar {
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+}
+
+// ---------- Key figures ----------
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+}
+
+.stat {
+  padding: var(--space-4);
+
+  & + & {
+    border-left: 1px solid var(--color-border);
+  }
+
+  @include down('sm') {
+    & + & {
+      border-left: 0;
+      border-top: 1px solid var(--color-border);
+    }
+  }
+}
+
+.stat__label {
+  @include text('secondary');
+  display: block;
+}
+
+.stat__value {
+  display: block;
+  margin-top: 2px;
+  font-size: var(--font-size-stat);
+  font-weight: var(--font-weight-semibold);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+.stat__hint {
+  @include text('meta');
+  display: block;
+  margin-top: 2px;
+}
+
+// ---------- Alerts ----------
+
+.alert {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-subtle);
+  font-size: var(--font-size-secondary);
+
+  > app-icon {
+    margin-top: 1px;
+  }
+}
+
+@each $tone in (success, warning, danger, info) {
+  .alert--#{$tone} {
+    border-color: color-mix(in srgb, var(--color-#{$tone}) 30%, transparent);
+    background: var(--color-#{$tone}-subtle);
+
+    > app-icon {
+      color: var(--color-#{$tone});
+    }
+  }
+}
+
+// ---------- Buttons ----------
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  height: var(--control-height);
+  padding: 0 var(--space-3);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-medium);
+  white-space: nowrap;
+  text-decoration: none;
+  box-shadow: 0 1px 1px rgba(15, 20, 32, 0.04);
+  transition:
+    background-color var(--transition-fast),
+    border-color var(--transition-fast);
+
+  &:hover:not(:disabled) {
+    background: var(--color-surface-hover);
+    text-decoration: none;
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(1px);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &[aria-busy='true'] {
+    cursor: progress;
+  }
+}
+
+.btn--primary {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: var(--color-text-inverse);
+
+  &:hover:not(:disabled) {
+    background: var(--color-accent-hover);
+    border-color: var(--color-accent-hover);
+  }
+}
+
+.btn--danger {
+  background: var(--color-danger);
+  border-color: var(--color-danger);
+  color: var(--color-text-inverse);
+
+  &:hover:not(:disabled) {
+    background: var(--color-danger-hover);
+  }
+}
+
+.btn--ghost {
+  border-color: transparent;
+  background: transparent;
+  box-shadow: none;
+  color: var(--color-text-secondary);
+
+  &:hover:not(:disabled) {
+    color: var(--color-text);
+  }
+}
+
+.btn--sm {
+  height: var(--control-height-sm);
+  padding: 0 var(--space-2);
+  font-size: var(--font-size-secondary);
+}
+
+.btn--icon {
+  width: var(--control-height);
+  padding: 0;
+
+  &.btn--sm {
+    width: var(--control-height-sm);
+  }
+}
+
+.spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// Segmented control: a small set of mutually exclusive views (e.g. My team / Everyone).
+.segmented {
+  display: inline-flex;
+  padding: 2px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-subtle);
+
+  button {
+    height: calc(var(--control-height) - 6px);
+    padding: 0 var(--space-3);
+    border: 0;
+    border-radius: 4px;
+    background: transparent;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-secondary);
+    font-weight: var(--font-weight-medium);
+
+    &:hover {
+      color: var(--color-text);
+    }
+
+    &[aria-pressed='true'] {
+      background: var(--color-surface);
+      color: var(--color-text);
+      box-shadow: 0 1px 2px rgba(15, 20, 32, 0.12);
+    }
+  }
+}
+
+// ---------- Forms ----------
+
+.form {
+  display: grid;
+  gap: var(--space-4);
+  max-width: var(--form-max-width);
+}
+
+.form__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+
+  @include down('sm') {
+    grid-template-columns: 1fr;
+  }
+}
+
+.form__actions {
+  display: flex;
+  gap: var(--space-2);
+  padding-top: var(--space-2);
+}
+
+.form-error {
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid color-mix(in srgb, var(--color-danger) 35%, transparent);
+  border-radius: var(--radius-sm);
+  background: var(--color-danger-subtle);
+  color: var(--color-danger);
+  font-size: var(--font-size-secondary);
+}
+
+.input,
+.select,
+.textarea {
+  width: 100%;
+  height: var(--control-height);
+  padding: 0 var(--space-3);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  font-size: var(--font-size-body);
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+
+  &:hover:not(:disabled) {
+    border-color: var(--color-text-tertiary);
+  }
+
+  &:focus-visible {
+    outline: none;
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px var(--color-focus-ring);
+  }
+
+  &:disabled {
+    background: var(--color-surface-subtle);
+    color: var(--color-text-tertiary);
+    cursor: not-allowed;
+  }
+
+  &[aria-invalid='true'] {
+    border-color: var(--color-danger);
+  }
+}
+
+.textarea {
+  height: auto;
+  min-height: 88px;
+  padding: var(--space-2) var(--space-3);
+  resize: vertical;
+}
+
+.select {
+  padding-right: var(--space-8);
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23545d6c' stroke-width='1.5'%3E%3Cpath d='m3 4.5 3 3 3-3'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right var(--space-3) center;
+}
+
+.checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  cursor: pointer;
+
+  input {
+    width: 16px;
+    height: 16px;
+    margin: 0;
+    accent-color: var(--color-accent);
+  }
+}
+
+// ---------- Tables ----------
+
+.table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-panel);
+}
+
+.table {
+  width: 100%;
+
+  th,
+  td {
+    height: var(--table-row-height);
+    padding: var(--space-2) var(--space-4);
+    border-bottom: 1px solid var(--color-border);
+    text-align: left;
+    vertical-align: middle;
+  }
+
+  th {
+    height: 38px;
+    background: var(--color-surface-subtle);
+    color: var(--color-text-tertiary);
+    font-size: var(--font-size-meta);
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  tbody tr:last-child td {
+    border-bottom: 0;
+  }
+
+  tbody tr:hover td {
+    background: var(--color-surface-subtle);
+  }
+
+  .num {
+    text-align: right;
+  }
+
+  .actions {
+    width: 1%;
+    text-align: right;
+    white-space: nowrap;
+
+    // Angular strips whitespace between elements, so without this buttons touch each other.
+    > * + * {
+      margin-left: var(--space-1);
+    }
+  }
+
+  .truncate {
+    @include truncate;
+    max-width: 280px;
+  }
+
+  // Sortable column header.
+  .sort {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    letter-spacing: inherit;
+    text-transform: inherit;
+
+    &:hover {
+      color: var(--color-text);
+    }
+  }
+}
+
+// Name cell with an avatar.
+.person {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+  font-weight: var(--font-weight-medium);
+}
+
+.skeleton {
+  display: block;
+  height: 12px;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(
+    90deg,
+    var(--color-surface-hover) 25%,
+    var(--color-surface-subtle) 50%,
+    var(--color-surface-hover) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.2s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton,
+  .spinner {
+    animation-duration: 2.4s;
+  }
+}
+
+// ---------- Badges ----------
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 22px;
+  padding: 0 var(--space-2);
+  border-radius: 11px;
+  background: var(--color-surface-hover);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-meta);
+  font-weight: var(--font-weight-medium);
+  white-space: nowrap;
+
+  &::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+}
+
+@each $tone in (success, warning, danger, info) {
+  .badge--#{$tone} {
+    background: var(--color-#{$tone}-subtle);
+    color: var(--color-#{$tone});
+  }
+}
+
+// Goal label: colour dot + name (colour never stands alone).
+.goal-dot {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+
+  &::before {
+    content: '';
+    flex-shrink: 0;
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+    background: var(--goal-color, var(--color-text-tertiary));
+  }
+}
+
+// ---------- Description list (key/value) ----------
+
+.details {
+  display: grid;
+  grid-template-columns: minmax(140px, max-content) 1fr;
+  gap: var(--space-3) var(--space-6);
+
+  dt {
+    @include text('secondary');
+  }
+
+  @include down('sm') {
+    grid-template-columns: 1fr;
+    gap: 2px;
+
+    dd {
+      margin-bottom: var(--space-2);
+    }
+  }
+}
+
+// ---------- CDK overlay (dialogs, menus, tooltips) ----------
+
+.cdk-overlay-dark-backdrop {
+  background: var(--color-overlay);
+}
+
+.menu {
+  min-width: 200px;
+  padding: var(--space-1);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-overlay);
+}
+
+.menu__item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  height: var(--control-height);
+  padding: 0 var(--space-2);
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-text);
+  text-align: left;
+  text-decoration: none;
+
+  &:hover,
+  &:focus-visible,
+  &.cdk-menu-item-active {
+    outline: none;
+    background: var(--color-surface-hover);
+    text-decoration: none;
+  }
+}
+
+.menu__separator {
+  height: 1px;
+  margin: var(--space-1) 0;
+  background: var(--color-border);
+}
+
+.tooltip {
+  max-width: 280px;
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  background: #1b2336;
+  color: #fff;
+  font-size: var(--font-size-meta);
+  line-height: 1.45;
+  box-shadow: var(--shadow-overlay);
+  pointer-events: none;
+}
+
+// ---------- Dialogs (content inside the CDK dialog container) ----------
+
+.dialog {
+  display: block;
+  padding: var(--space-6);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-overlay);
+}
+
+.dialog__title {
+  @include text('section');
+  font-size: 17px;
+}
+
+.dialog__body {
+  margin-top: var(--space-2);
+}
+
+.dialog__form {
+  display: grid;
+  gap: var(--space-4);
+  margin-top: var(--space-4);
+}
+
+.dialog__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  margin-top: var(--space-6);
+}
+
+// ---------- Toolbar above tables (filters) ----------
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.toolbar__spacer {
+  flex: 1;
+}
+
+.toolbar__filter {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+
+  .select {
+    width: auto;
+    min-width: 160px;
+  }
+}
+
+.button-group {
+  display: inline-flex;
+  gap: var(--space-1);
+}
+
+// Tables that turn into stacked cards on phones. Cells need `data-label` for their heading.
+.table--stack {
+  @include down('sm') {
+    thead {
+      @include visually-hidden;
+    }
+
+    tr {
+      display: grid;
+      gap: 6px;
+      padding: var(--space-3) var(--space-4);
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    tbody tr:last-child {
+      border-bottom: 0;
+    }
+
+    td {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-3);
+      height: auto;
+      padding: 0;
+      border: 0;
+      text-align: right;
+
+      &::before {
+        content: attr(data-label);
+        color: var(--color-text-tertiary);
+        font-size: var(--font-size-meta);
+        text-align: left;
+      }
+
+      &.num {
+        text-align: right;
+      }
+    }
+
+    td[data-primary] {
+      justify-content: flex-start;
+      font-weight: var(--font-weight-semibold);
+
+      &::before {
+        display: none;
+      }
+    }
+  }
+}
+
+// A table inside a panel section (e.g. below tabs) without its own frame.
+.table-wrap--flush {
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.panel__header .select {
+  width: auto;
+  height: var(--control-height-sm);
+  font-size: var(--font-size-secondary);
+}
+
+.toolbar__select {
+  width: auto;
+  min-width: 150px;
+}
+
+// Person link in a table row: avatar, name and a secondary line.
+a.person {
+  color: var(--color-text);
+
+  &:hover {
+    text-decoration: none;
+
+    .person__text {
+      text-decoration: underline;
+    }
+  }
+}
+
+.person__text {
+  display: grid;
+  min-width: 0;
+  line-height: 1.3;
+
+  .text-meta {
+    font-weight: var(--font-weight-regular);
+  }
+}
+
+// ---------- Charts (shared by the SVG chart components) ----------
+
+.chart {
+  position: relative;
+
+  svg {
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+}
+
+.chart-grid {
+  stroke: var(--color-border);
+  stroke-width: 1;
+}
+
+.chart-axis {
+  fill: var(--color-text-tertiary);
+  font-size: 11px;
+}
+
+.chart-value {
+  fill: var(--color-text);
+  font-size: 12px;
+  font-weight: var(--font-weight-semibold);
+}
+
+.chart-hit {
+  fill: transparent;
+}
+
+.chart-crosshair {
+  stroke: var(--color-text-tertiary);
+  stroke-width: 1;
+}
+
+.chart-dot {
+  fill: var(--color-accent);
+  stroke: var(--color-surface);
+  stroke-width: 2;
+}
+
+.chart-tooltip {
+  position: absolute;
+  z-index: 10;
+  display: grid;
+  gap: 1px;
+  padding: 6px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-overlay);
+  font-size: var(--font-size-meta);
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+  transform: translate(-50%, calc(-100% - 8px));
+  pointer-events: none;
+
+  strong {
+    color: var(--color-text);
+    font-size: var(--font-size-secondary);
+  }
+}
+
+.chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  margin-bottom: var(--space-2);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-meta);
+
+  li {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+}
+
+// Legends mirror the mark: a short line for line series.
+.chart-key {
+  width: 14px;
+  height: 2px;
+  border-radius: 1px;
+}
+
+.chart-key--actual {
+  background: var(--color-accent);
+}
+
+.chart-key--plan {
+  height: 1.5px;
+  background: var(--color-text-tertiary);
+}
+
+.chart-table {
+  margin-top: var(--space-2);
+  font-size: var(--font-size-secondary);
+
+  summary {
+    width: fit-content;
+    color: var(--color-accent-text);
+    cursor: pointer;
+  }
+
+  .table {
+    margin-top: var(--space-2);
+  }
+
+  .table-scroll,
+  &[open] {
+    max-height: 320px;
+    overflow-y: auto;
+  }
+}
+
+// ---------- Progress bar ----------
+
+.progress {
+  position: relative;
+  height: 8px;
+  overflow: hidden;
+  border-radius: 4px;
+  // The unfilled track is a lighter step of the same hue as the fill.
+  background: var(--color-accent-subtle);
+}
+
+.progress__fill {
+  height: 100%;
+  border-radius: 4px;
+  background: var(--color-accent);
+}
+
+// Where progress should be by now; the fill passing it means ahead of plan.
+.progress__marker {
+  position: absolute;
+  top: -2px;
+  bottom: -2px;
+  width: 2px;
+  background: var(--color-text);
+  opacity: 0.55;
+}

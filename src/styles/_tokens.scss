@@ -1,0 +1,115 @@
+// Single source of design values. SCSS maps are turned into CSS custom properties so
+// components (and a future dark theme) use the same tokens at runtime.
+
+$colors: (
+  'bg': #f5f6f4,
+  'surface': #ffffff,
+  'surface-subtle': #f8f9f7,
+  'surface-hover': #eff1ee,
+  'border': #e2e5e0,
+  'border-strong': #c9cfc8,
+  'text': #161a17,
+  'text-secondary': #4f5a53,
+  'text-tertiary': #7a857e,
+  'text-inverse': #ffffff,
+
+  'accent': #0f766e,
+  'accent-hover': #0b5f58,
+  'accent-subtle': #e6f4f2,
+  'accent-text': #0c6b63,
+
+  // Navigation: a deep green-slate panel frames the product without decoration.
+  'nav-bg': #11201d,
+  'nav-bg-hover': #1a2e2a,
+  'nav-bg-active': #213a35,
+  'nav-text': #b3c4bf,
+  'nav-text-strong': #ffffff,
+  'nav-muted': #7d948e,
+  'nav-border': #1f322e,
+
+  'success': #1b7a4a,
+  'success-subtle': #e7f5ee,
+  'warning': #9a5f00,
+  'warning-subtle': #fdf3e0,
+  'danger': #c0342b,
+  'danger-hover': #a32a22,
+  'danger-subtle': #fcebea,
+  'info': #2a67a8,
+  'info-subtle': #e9f2fb,
+
+  'focus-ring': rgba(15, 118, 110, 0.35),
+  'overlay': rgba(12, 20, 18, 0.45),
+);
+
+// Goal colours: assigned by goal id, always shown together with the goal's name.
+// Validated with the dataviz palette checker (CVD-safe adjacent pairs); light hues stay next to text.
+$goal-colors: (#2a78d6, #eb6834, #1baf7a, #eda100, #e87ba4, #008300, #4a3aa7, #e34948);
+
+// Heatmap intensity, from no activity to a lot (same hue as the accent).
+$heat: (#ebeeea, #b9e0d9, #6fc0b2, #2b9486, #0f5f58);
+
+$space: (
+  '1': 4px,
+  '2': 8px,
+  '3': 12px,
+  '4': 16px,
+  '5': 20px,
+  '6': 24px,
+  '8': 32px,
+  '10': 40px,
+  '12': 48px,
+);
+
+$font-size: (
+  'meta': 12px,
+  'secondary': 13px,
+  'body': 14px,
+  'section': 15px,
+  'title': 22px,
+  'stat': 26px,
+);
+
+:root {
+  @each $name, $value in $colors {
+    --color-#{$name}: #{$value};
+  }
+  @for $i from 1 through length($goal-colors) {
+    --goal-#{$i}: #{nth($goal-colors, $i)};
+  }
+  @for $i from 1 through length($heat) {
+    --heat-#{$i - 1}: #{nth($heat, $i)};
+  }
+  @each $name, $value in $space {
+    --space-#{$name}: #{$value};
+  }
+  @each $name, $value in $font-size {
+    --font-size-#{$name}: #{$value};
+  }
+
+  --font-family:
+    Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-family-mono: ui-monospace, 'SF Mono', 'Cascadia Mono', Consolas, monospace;
+  --line-height: 1.5;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  --radius-sm: 5px;
+  --radius-md: 8px;
+  --radius-lg: 10px;
+
+  --control-height: 34px;
+  --control-height-sm: 28px;
+  --table-row-height: 44px;
+  --icon-size: 16px;
+
+  --shell-sidebar-width: 240px;
+  --shell-topbar-height: 56px;
+  --content-max-width: 1240px;
+  --form-max-width: 600px;
+
+  --shadow-panel: 0 1px 2px rgba(15, 20, 32, 0.04);
+  --shadow-overlay: 0 10px 28px rgba(15, 20, 32, 0.14), 0 2px 6px rgba(15, 20, 32, 0.08);
+  --transition-fast: 120ms ease;
+}
