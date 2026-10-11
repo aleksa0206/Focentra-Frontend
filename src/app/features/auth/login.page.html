@@ -1,0 +1,89 @@
+@if (step() === 'credentials') {
+  <h1>Sign in</h1>
+
+  @if (expired() && !error()) {
+    <p class="auth-notice" role="status">Your session has expired. Please sign in again.</p>
+  }
+  @if (error(); as message) {
+    <p class="form-error" role="alert">
+      {{ message }}
+      @if (unverified()) {
+        <a routerLink="/verify-email">Send a new link</a>
+      }
+    </p>
+  }
+
+  <form class="auth-form" [formGroup]="credentials" (ngSubmit)="submitCredentials()" novalidate>
+    <app-field label="Email">
+      <input
+        class="input"
+        appFieldControl
+        type="email"
+        formControlName="email"
+        autocomplete="username"
+      />
+    </app-field>
+    <app-field label="Password">
+      <input
+        class="input"
+        appFieldControl
+        type="password"
+        formControlName="password"
+        autocomplete="current-password"
+      />
+    </app-field>
+    <button
+      type="submit"
+      class="btn btn--primary auth-submit"
+      [disabled]="submitting()"
+      [attr.aria-busy]="submitting()"
+    >
+      @if (submitting()) {
+        <span class="spinner" aria-hidden="true"></span>
+      }
+      Sign in
+    </button>
+  </form>
+
+  <p class="auth-footer"><a routerLink="/forgot-password">Forgot your password?</a></p>
+  <p class="auth-footer">New to Focentra? <a routerLink="/register">Create an account</a></p>
+} @else {
+  <h1>Confirm sign-in</h1>
+  <p class="text-secondary auth-lead">
+    Enter the six-digit code from your authenticator app. The code is valid for a few minutes.
+  </p>
+
+  @if (error(); as message) {
+    <p class="form-error" role="alert">{{ message }}</p>
+  }
+
+  <form class="auth-form" [formGroup]="codeForm" (ngSubmit)="submitCode()" novalidate>
+    <app-field label="Verification code">
+      <input
+        class="input auth-code"
+        appFieldControl
+        formControlName="code"
+        inputmode="numeric"
+        autocomplete="one-time-code"
+        maxlength="6"
+      />
+    </app-field>
+    <button
+      type="submit"
+      class="btn btn--primary auth-submit"
+      [disabled]="submitting()"
+      [attr.aria-busy]="submitting()"
+    >
+      @if (submitting()) {
+        <span class="spinner" aria-hidden="true"></span>
+      }
+      Verify
+    </button>
+  </form>
+
+  <p class="auth-footer">
+    <button type="button" class="btn btn--ghost btn--sm" (click)="backToCredentials()">
+      Back to sign in
+    </button>
+  </p>
+}
