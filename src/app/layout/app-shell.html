@@ -1,0 +1,107 @@
+<a class="skip-link" href="#main">Skip to content</a>
+
+<div class="shell" [class.shell--nav-open]="navOpen()">
+  <aside class="sidebar" id="app-sidebar">
+    <a class="brand" routerLink="/" aria-label="Focentra home">
+      <img class="brand__mark" src="logo-mark.svg" alt="" width="28" height="28" />
+      <span class="brand__name">Focentra</span>
+    </a>
+
+    <nav class="sidebar__nav" aria-label="Main navigation">
+      <ul>
+        @for (item of nav; track item.path) {
+          <li>
+            <a
+              class="sidebar__link"
+              [routerLink]="item.path"
+              routerLinkActive="is-active"
+              [routerLinkActiveOptions]="{ exact: !!item.exact }"
+              ariaCurrentWhenActive="page"
+            >
+              <app-icon [name]="item.icon" [size]="17" />
+              <span>{{ item.label }}</span>
+            </a>
+          </li>
+        }
+      </ul>
+    </nav>
+
+    @if (auth.user(); as user) {
+      <div class="sidebar__user">
+        <span class="avatar" aria-hidden="true">{{ initials(user.name) }}</span>
+        <span class="sidebar__user-text">
+          <span class="sidebar__user-name">{{ user.name }}</span>
+          <span class="sidebar__user-zone">{{ user.timezone }}</span>
+        </span>
+      </div>
+    }
+  </aside>
+
+  @if (navOpen()) {
+    <button
+      type="button"
+      class="shell__backdrop"
+      aria-label="Close navigation"
+      (click)="navOpen.set(false)"
+    ></button>
+  }
+
+  <div class="shell__main">
+    <header class="topbar">
+      <button
+        type="button"
+        class="btn btn--ghost btn--icon topbar__menu"
+        aria-controls="app-sidebar"
+        [attr.aria-expanded]="navOpen()"
+        aria-label="Navigation"
+        (click)="navOpen.set(!navOpen())"
+      >
+        <app-icon name="menu" />
+      </button>
+
+      <div class="topbar__spacer"></div>
+
+      <app-timer-control />
+
+      @if (auth.user(); as user) {
+        <button
+          type="button"
+          class="btn btn--ghost topbar__user"
+          [cdkMenuTriggerFor]="userMenu"
+          aria-label="Account menu"
+        >
+          <span class="avatar avatar--light" aria-hidden="true">{{ initials(user.name) }}</span>
+          <app-icon name="chevronDown" [size]="14" />
+        </button>
+
+        <ng-template #userMenu>
+          <div class="menu" cdkMenu>
+            <div class="topbar__menu-header">
+              <strong>{{ user.name }}</strong>
+              <span class="text-meta">{{ user.email }}</span>
+            </div>
+            <div class="menu__separator"></div>
+            <a class="menu__item" cdkMenuItem routerLink="/account">
+              <app-icon name="user" />
+              My account
+            </a>
+            <div class="menu__separator"></div>
+            <button
+              type="button"
+              class="menu__item"
+              cdkMenuItem
+              (cdkMenuItemTriggered)="auth.logout()"
+            >
+              <app-icon name="logout" />
+              Sign out
+            </button>
+          </div>
+        </ng-template>
+      }
+    </header>
+
+    <main id="main" class="shell__content" tabindex="-1">
+      <router-outlet />
+    </main>
+  </div>
+</div>
