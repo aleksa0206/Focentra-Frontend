@@ -2,6 +2,8 @@
 
 Angular 22 client for [Focentra-Backend](https://github.com/aleksa0206/Focentra-Backend): track your study time against goals and see whether you are on pace.
 
+Live: [focentra.space](https://focentra.space)
+
 ![Dashboard](docs/screenshots/dashboard.png)
 
 | Goal with progress against an even pace | A year of activity |
@@ -46,7 +48,7 @@ src/styles/   _tokens.scss (single source of design values → CSS variables), _
 
 ## Decisions that aren't obvious from the code
 
-- **Access token in memory only.** After a reload the session is restored via the httpOnly refresh cookie (`APP_INITIALIZER` → `POST /auth/refresh` → `GET /auth/me`). On a 401 the interceptor does one shared refresh for all parallel requests, because the backend rotates the refresh token.
+- **Access token in memory only.** After a reload the session is restored via the httpOnly refresh cookie (`provideAppInitializer` → `POST /auth/refresh` → `GET /auth/me`). On a 401 the interceptor does one shared refresh for all parallel requests, because the backend rotates the refresh token.
 - **Everything is shown in the profile time zone, not the browser's**, so the days on screen match the days the backend counts statistics in. Manual entries are typed as wall-clock times in that zone and converted with `@date-fns/tz`; an end time before the start means the session ended the next day.
 - **No chart library.** The three charts are small SVG components that draw at the measured width of their panel, so text keeps its size on any screen. Each has a hover tooltip and a "Show as table" view with the same numbers for keyboard and screen-reader users. The heatmap uses one hue from light to dark, and the goal colours are a CVD-checked palette always shown next to the goal's name.
 - **The timer syncs instead of pushing.** It is reloaded every minute while the tab is visible and whenever the tab comes back, so a start or stop on another device shows up without WebSockets. Totals on the dashboard keep counting while the timer runs.
